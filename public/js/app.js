@@ -60,20 +60,18 @@ const TimersDashboard = React.createClass({
     });
   },
   startTimer: function (timerId) {
-    const now = Date.now();
-
-    this.setState({
-      timers: this.state.timers.map((timer) => {
-        if (timer.id === timerId) {
-          return Object.assign({}, timer, {
-            runningSince: now,
-          });
-        }
-        else {
-          return timer;
-        }
-      }),
-    });
+  const now = Date.now();
+  this.setState({
+  timers: this.state.timers.map((timer) => {
+  if (timer.id === timerId) {
+  return Object.assign({}, timer, {
+  runningSince: now,
+  });
+  } else {
+  return timer;
+  }
+  }),
+  });
   },
   stopTimer: function (timerId) {
     const now = Date.now();
@@ -113,33 +111,6 @@ const TimersDashboard = React.createClass({
     );
   },
 });
-
-
-const TimerActionButton = React.createClass({
-  render: function () {
-    if (this.props.timerIsRunning) {
-      return (
-        <div
-          className="ui bottom attached red basic button"
-          onClick={this.props.onStopClick}
-        >
-          Stop
-       </div>
-     );
-    }
-    else {
-      return (
-        <div
-          className="ui bottom attached green basic button"
-          onClick={this.props.onStartClick}
-        >
-          Start
-        </div>
-      );
-    }
-  },
-});
-
 
 const EditableTimerList = React.createClass({
   render: function() {
@@ -305,9 +276,17 @@ const TogglebleTimerForm = React.createClass({
 const Timer = React.createClass({
   componentDidMount: function () {
     this.forceUpdateInterval = setInterval(() => this.forceUpdate(), 50);
+    console.log('Timers in this file')
   },
   componentWillUnmount: function () {
     clearInterval(this.forceUpdateInterval);
+  },
+  handleStartClick: function() {
+    console.log("Im working");
+    this.props.onStartClick(this.props.id);
+  },
+  handleStopClick: function () {
+    this.props.onStopClick(this.props.id);
   },
   handleTrashClick: function () {
     this.props.onTrashClick(this.props.id)
@@ -316,49 +295,71 @@ const Timer = React.createClass({
     const elapsedString = helpers.renderElapsedString(
     this.props.elapsed, this.props.runningSince
     );
+
     return (
-      <div className="ui centered card">
-        <div className="content">
-          <div className="header">
+      <div className='ui centered card'>
+        <div className='content'>
+          <div className='header'>
             {this.props.title}
           </div>
-          <div className="meta">
+          <div className='meta'>
             {this.props.project}
           </div>
-          <div className="center aligned description">
+          <div className='center aligned description'>
             <h2>
               {elapsedString}
             </h2>
           </div>
-          <div className="extra content">
+          <div className='extra content'>
             <span
-              className="right floated edit icon"
+              className='right floated edit icon'
               onClick={this.props.onEditClick}
             >
-              <i className="edit icon"></i>
+              <i className='edit icon' />
             </span>
             <span
-              className="right floated trash icon"
+              className='right floated trash icon'
               onClick={this.handleTrashClick}
             >
-              <i className="trash icon"></i>
+              <i className='trash icon' />
             </span>
+          </div>
         </div>
-      </div>
-      <div className="ui bottom attached blue basic button">
-        Start
-      </div>
-      <TimerActionButton
-        timerIsRunning={!!this.props.runningSince}
-        onStartClick={this.handleStartClick}
-        onStopClick={this.handleStopClick}
+        {/* At the bottom of `Timer.render()`` */}
+        <TimerActionButton
+          timerIsRunning={!!this.props.runningSince}
+          onStartClick={this.handleStartClick}
+          onStopClick={this.handleStopClick}
         />
-    </div>
-  );
-},
+      </div>
+    );
+  }
 });
 
-
+const TimerActionButton = React.createClass({
+  render: function () {
+    if (this.props.timerIsRunning) {
+      return (
+        <div
+          className="ui bottom attached red basic button"
+          onClick={this.props.onStopClick}
+        >
+          Stop
+       </div>
+     );
+    }
+    else {
+      return (
+        <div
+          className="ui bottom attached green basic button"
+          onClick={this.props.onStartClick}
+        >
+          Start
+        </div>
+      );
+    }
+  },
+});
 
 ReactDOM.render(
   <TimersDashboard />,
